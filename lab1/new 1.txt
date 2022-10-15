@@ -1,0 +1,71 @@
+p1:
+-------------------
+program{
+int a;
+a=3;
+int b;
+b=3
+pana a != b{
+	daca a > b {
+		a=a-b;
+	}
+	altfel { 
+		b=b-a;
+	}
+}
+consola<<a;
+}
+
+p2:
+-------------------
+program{
+int a;
+int b;
+int r;
+r=1;
+consola>>a;
+consola>>b;
+repeta i=1:b {
+	r=r*a;
+}
+consola<<r;
+}
+
+p3:
+-------------------
+program{
+int n;
+consola>>n;
+int arr[n];
+repeta i=0:n-1{
+	consola>>arr[aux];
+}
+int min;
+min=arr[0];
+repeta i=0:n-1 {
+	daca arr[i] < min {
+		min = arr[aux];
+	}
+}
+consola<<min;
+}
+
+p1err:
+-------------------
+program{
+int 3a;
+a=3;
+int b;
+b=3;
+char salut='aaaaaa';
+pana a!=b{
+	daca a>b {
+		a=a-b;
+	}
+	altfel { 
+		b=b-a;
+	}
+}
+consola<<a;
+}
+
