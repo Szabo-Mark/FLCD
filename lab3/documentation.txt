@@ -1,0 +1,9 @@
+HashTable implementation:
+
+The class Position will hold the position of the bucket array and the position in the linked listed of the token.
+The class Node is a node in the linked list. It holds the value(the actual token) and the next node in the list.
+
+The class HashTable has the method add(String token).
+It works in the following way:
+	-if the given token is already in the symbol table it will return the position of it(a Position object)
+	-if not, it firstly adds the token into the table and then returns its new position.
