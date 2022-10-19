@@ -1,0 +1,31 @@
+Alphabet:
+	-Upper case(A-Z) and lower case(a-z) letters of the english alphabet
+	-Decimal digits (0-9)
+	
+	
+Lexic:
+a)Special symbols, representing:
+	-operators: +, -, *, /, %, =, <, >, <=, >=, ==, !=
+	-separators: space, ;, {, }, :, >>, <<, [, ], '
+	-reserved words: int, char, pana, daca, altfel, repeta, consola, program
+	
+b)Identifiers:
+	-sequence of characters(letters and digits) with the first character being a letter.
+	BNF rule:
+		<digit>::= 0|1|2|..|9
+		<letter>::= a|b|..|z|A||B|..|Z
+		<specialchar>::=_
+		<char>::=<digit>|<letter>|<specialchar>
+		<identifier>::= <letter>|<letter> <charSeq>
+		<charSeq>::=<char>|<char> <charSeq>
+
+c)Constants:
+	1)integer rule:
+		<nonzero-digits>::=1|2|..|9
+		<integer>::=<unsigned>|<sign><unsigned>|0
+		<unsigned>::=<nonzero-digits><digitSeq> | <nonzero-digits>
+		<digitSeq>::=<digit><digitSeq> | <digit>
+		<digit>::= 0|1|..|9
+		<sign>::= +|-
+	2)character rule:
+		<character>::='<char>'
