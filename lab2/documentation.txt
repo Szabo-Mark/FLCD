@@ -12,3 +12,4 @@ The class HashTable has the public method add(String token).
 	The collision strategy is using linked lists. Each slot in the table is the head of a linked list.
 	First we hash the given token and get the head of the linked list on that position.
 	We parse that linked list searching for the token. If it's not there, we add it at the end.
+	
