@@ -14,8 +14,7 @@ b)Identifiers:
 	BNF rule:
 		<digit>::= 0|1|2|..|9
 		<letter>::= a|b|..|z|A||B|..|Z
-		<specialchar>::=_
-		<char>::=<digit>|<letter>|<specialchar>
+		<char>::=<digit>|<letter>
 		<identifier>::= <letter>|<letter> <charSeq>
 		<charSeq>::=<char>|<char> <charSeq>
 

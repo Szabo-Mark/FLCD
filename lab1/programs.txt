@@ -4,7 +4,7 @@ program{
 int a;
 a=3;
 int b;
-b=3
+b=3;
 pana a != b{
 	daca a > b {
 		a=a-b;
