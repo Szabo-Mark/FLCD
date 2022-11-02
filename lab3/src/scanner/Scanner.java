@@ -15,6 +15,7 @@ public class Scanner {
     private final String SEPARATORS_REGEX = "((?=" + SEPARATORS + ")|(?<=" + SEPARATORS + "))";
     private final String INTEGER_REGEX = "^0|[+|-]?[1-9][0-9]*$";
     private final String CHARACTER_REGEX = "^'[a-zA-Z0-9]'$";
+    private final String IDENTIFIER_REGEX = "^([a-zA-Z][a-zA-Z\\d]*)$";
     private final Map<String, Set<String>> COMPOUND_SEPARATORS = new HashMap<>(Map.of(
             "!", Set.of("="),
             "<", Set.of("=", "<"),
@@ -118,7 +119,7 @@ public class Scanner {
                     Position position = constants.add(token);
                     pif.addToList(CONSTANT, position);
                 } else {
-                    if (token.matches("^([a-zA-Z][a-zA-Z\\d]*)$")) {
+                    if (token.matches(IDENTIFIER_REGEX)) {
                         Position position = identifiers.add(token);
                         pif.addToList(IDENTIFIER, position);
                     } else {
