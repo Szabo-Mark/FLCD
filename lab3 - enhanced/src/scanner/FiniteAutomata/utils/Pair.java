@@ -1,4 +1,4 @@
-package utils;
+package scanner.FiniteAutomata.utils;
 
 import java.util.Objects;
 

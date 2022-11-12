@@ -1,34 +1,30 @@
+package scanner.FiniteAutomata;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class FiniteAutomata {
     private final Set<String> states;
     private final Set<String> symbols;
-    private String initialState;
     private final Set<String> finalStates;
     private final TransitionFunction transitionFunction;
+    private String initialState;
 
-    public FiniteAutomata(Set<String> states, Set<String> symbols, String initialState, Set<String> finalStates, TransitionFunction transitionFunction) {
-        this.states = states;
-        this.symbols = symbols;
-        this.initialState = initialState;
-        this.finalStates = finalStates;
-        this.transitionFunction = transitionFunction;
-    }
-
-    public FiniteAutomata() {
+    public FiniteAutomata(String pathToFile) {
         states = new HashSet<>();
         symbols = new HashSet<>();
         initialState = null;
         finalStates = new HashSet<>();
         transitionFunction = new TransitionFunction();
+        readFromFile(pathToFile);
     }
 
-    public void readFromFile(String pathToFile) {
+    private void readFromFile(String pathToFile) {
         try (BufferedReader bufferedReader = new BufferedReader(new FileReader(pathToFile))) {
-            StringBuilder errorStringBuilder = new StringBuilder("Errors\n");
+            StringBuilder errorStringBuilder = new StringBuilder();
             FAFileDelimiter lastFileDelimiter = null;
             FAFileDelimiter faFileDelimiter = null;
             String line = bufferedReader.readLine();
@@ -50,15 +46,21 @@ public class FiniteAutomata {
                 line = bufferedReader.readLine();
                 lineCount++;
             }
-            System.out.println(errorStringBuilder);
+            if (errorStringBuilder.isEmpty()) {
+                System.out.println("Finite Automata read successfully from "+pathToFile);
+            } else {
+                System.out.println("Errors\n" + errorStringBuilder);
+            }
+
         } catch (IOException exception) {
             System.out.println("Token file could not be parsed!");
         }
     }
 
-    public boolean isAccepted(List<String> sequence) {
+    public boolean accepts(String sequence) {
+        List<String> symbols = transformToListOfStrings(sequence);
         String currentState = initialState;
-        for (String symbol : sequence) {
+        for (String symbol : symbols) {
             Optional<String> optional = transitionFunction.getResult(currentState, symbol);
             if (optional.isEmpty()) {
                 return false;
@@ -71,6 +73,7 @@ public class FiniteAutomata {
     public boolean isDFA() {
         return transitionFunction.isDFA();
     }
+
 
     private Optional<String> handleLine(FAFileDelimiter faFileDelimiter, String line) {
         return switch (faFileDelimiter) {
@@ -96,11 +99,17 @@ public class FiniteAutomata {
         if (initialState != null) {
             return Optional.of("Cannot have more than one initial state");
         }
+        if (!states.contains(line)) {
+            return Optional.of("Initial state '" + line + "' is not a state");
+        }
         initialState = line;
         return Optional.empty();
     }
 
     private Optional<String> handleFinalStates(String line) {
+        if (!states.contains(line)) {
+            return Optional.of("Final state '" + line + "' is not a state");
+        }
         finalStates.add(line);
         return Optional.empty();
     }
@@ -109,6 +118,15 @@ public class FiniteAutomata {
         String[] tokens = line.split("[,=]");
         if (tokens.length != 3) {
             return Optional.of("Wrong format for transition function!");
+        }
+        if (!states.contains(tokens[0])) {
+            return Optional.of("Source state '" + tokens[0] + "' is not a state");
+        }
+        if (!states.contains(tokens[2])) {
+            return Optional.of("Source state '" + tokens[2] + "' is not a state");
+        }
+        if (!symbols.contains(tokens[1])) {
+            return Optional.of("Transition symbol '" + tokens[1] + "' is not a symbol");
         }
         transitionFunction.add(tokens[0], tokens[1], tokens[2]);
         return Optional.empty();
@@ -131,6 +149,13 @@ public class FiniteAutomata {
             return FAFileDelimiter.TRANSITION_FUNCTION;
         }
         return null;
+    }
+
+    private List<String> transformToListOfStrings(String string) {
+        return string.chars()
+                .mapToObj(integer -> (char) integer)
+                .map(String::valueOf)
+                .collect(Collectors.toList());
     }
 
     public Set<String> getStates() {

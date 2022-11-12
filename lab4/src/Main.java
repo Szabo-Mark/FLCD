@@ -1,12 +1,11 @@
-import java.util.List;
+import FiniteAutomata.FiniteAutomata;
+
 import java.util.Scanner;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Main {
     public static void main(String[] args) {
-        FiniteAutomata finiteAutomata = new FiniteAutomata();
-        finiteAutomata.readFromFile("resources/FA.in");
+        FiniteAutomata finiteAutomata = new FiniteAutomata("resources/FA.in");
         printMenu();
         Scanner scanner = new Scanner(System.in);
         int option;
@@ -34,11 +33,7 @@ public class Main {
             Scanner scanner = new Scanner(System.in);
             System.out.print("sequence: ");
             String sequence = scanner.nextLine();
-            List<String> stringList = sequence.chars()
-                    .mapToObj(integer -> (char) integer)
-                    .map(String::valueOf)
-                    .collect(Collectors.toList());
-            System.out.println(finiteAutomata.isAccepted(stringList));
+            System.out.println(finiteAutomata.accepts(sequence));
         }
     }
 

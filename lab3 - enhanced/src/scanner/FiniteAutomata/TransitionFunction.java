@@ -1,4 +1,6 @@
-import utils.Pair;
+package scanner.FiniteAutomata;
+
+import scanner.FiniteAutomata.utils.Pair;
 
 import java.util.*;
 import java.util.stream.Collectors;
