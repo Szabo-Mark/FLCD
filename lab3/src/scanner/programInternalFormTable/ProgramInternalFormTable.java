@@ -1,6 +1,7 @@
 package scanner.programInternalFormTable;
 
 import scanner.symbolTable.Position;
+import scanner.utils.Pair;
 
 import java.util.LinkedList;
 import java.util.List;

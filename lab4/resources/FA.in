@@ -1,0 +1,16 @@
+STATES
+p
+q
+r
+SYMBOLS
+a
+b
+INITIAL_STATE
+p
+FINAL_STATES
+r
+TRANSITION_FUNCTION
+p,a=q
+p,b=r
+q,b=r
+r,a=q
