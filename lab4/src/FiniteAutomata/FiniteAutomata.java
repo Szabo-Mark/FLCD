@@ -47,7 +47,7 @@ public class FiniteAutomata {
                 lineCount++;
             }
             if (errorStringBuilder.isEmpty()) {
-                System.out.println("Finite Automata read successfully from "+pathToFile);
+                System.out.println("Finite Automata read successfully from " + pathToFile);
             } else {
                 System.out.println("Errors\n" + errorStringBuilder);
             }
@@ -58,6 +58,9 @@ public class FiniteAutomata {
     }
 
     public boolean accepts(String sequence) {
+        if (sequence.isEmpty()) {
+            return finalStates.contains(initialState);
+        }
         List<String> symbols = transformToListOfStrings(sequence);
         String currentState = initialState;
         for (String symbol : symbols) {
