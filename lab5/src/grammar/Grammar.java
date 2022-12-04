@@ -75,8 +75,7 @@ public class Grammar {
             return Optional.of("Non terminal " + leftSide + " was not defined!");
         }
         String rightSide = sides[1];
-        handleRightSideOfProduction(leftSide, rightSide);
-        return Optional.empty();
+        return handleRightSideOfProduction(leftSide, rightSide);
     }
 
     private Optional<String> handleRightSideOfProduction(String leftSide, String rightSide) {
