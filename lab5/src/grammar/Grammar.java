@@ -142,14 +142,14 @@ public class Grammar {
         System.out.println("Hi!");
         while (true) {
             System.out.println("""
-                    
+                                        
                     Press 1 to print the set of non terminals
                     Press 2 to print the set of terminals
                     Press 3 to print the set of productions
                     Press 4 to print productions for a given non terminal
                     Press 5 to do the CFG check
                     Press 0 to exit
-                    
+                                        
                     """);
 
             System.out.println("Your command:");
@@ -204,5 +204,43 @@ public class Grammar {
                 System.out.println(production);
             }
         }
+    }
+
+    private Set<String> getFirstForNonTerminal(String nonTerminal) {
+        Set<String> firstList = null;
+        for (Production production : productions) {
+            if (production.getLeftSide().contains(nonTerminal)) {
+                Integer index = 0;
+                while (index < production.getRightSide().size()) {
+                    firstList = new HashSet<>();
+                    if (terminals.contains(production.getRightSide().get(index))) {
+                        firstList.add(production.getRightSide().get(index));
+                    } else
+                        break;
+                    index = index + 1;
+                }
+            }
+            System.out.println(nonTerminal + " ->" + firstList);
+        }
+        return firstList;
+    }
+
+    public void first() {
+        for (String nonTerminal : nonTerminals) {
+            if (firstFunction.get(nonTerminal) == null)
+                for (Production production : productions) {
+                    if (production.getLeftSide().equals(nonTerminal)) {
+                        System.out.println("for "+nonTerminal);
+                        for (String item : production.getRightSide()) {
+                            if (nonTerminals.contains(item)) {
+                                firstFunction.put(item, getFirstForNonTerminal(item));
+                            }
+                        }
+                    }
+
+                }
+            firstFunction.put(nonTerminal, getFirstForNonTerminal(nonTerminal));
+        }
+        System.out.println(firstFunction.toString());
     }
 }
