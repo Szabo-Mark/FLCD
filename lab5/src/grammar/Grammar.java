@@ -11,6 +11,8 @@ public class Grammar {
     private final Set<String> terminals;
     private final Set<Production> productions;
     private String startingSymbol;
+    private Map<String, Set<String>> followFunction;
+    private Map<String, Set<String>> firstFunction;
 
     public Grammar(String pathToFile) {
         nonTerminals = new HashSet<>();
@@ -18,6 +20,8 @@ public class Grammar {
         terminals.add(EPSILON);
         productions = new HashSet<>();
         startingSymbol = null;
+        followFunction = new HashMap<>();
+        firstFunction = new HashMap<>();
         readFromFile(pathToFile);
     }
 
