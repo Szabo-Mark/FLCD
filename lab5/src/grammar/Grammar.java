@@ -137,4 +137,72 @@ public class Grammar {
         }
         return null;
     }
+
+    public void showMenu() {
+        System.out.println("Hi!");
+        while (true) {
+            System.out.println("""
+                    
+                    Press 1 to print the set of non terminals
+                    Press 2 to print the set of terminals
+                    Press 3 to print the set of productions
+                    Press 4 to print productions for a given non terminal
+                    Press 5 to do the CFG check
+                    Press 0 to exit
+                    
+                    """);
+
+            System.out.println("Your command:");
+            Scanner scanner = new Scanner(System.in);
+            String command = scanner.nextLine();
+            if (command.strip().equals("1")) {
+                System.out.println(getNonTerminals());
+            } else if (command.strip().equals("2")) {
+                System.out.println(getTerminals());
+            } else if (command.strip().equals("3")) {
+                System.out.println(getProductions());
+            } else if (command.strip().equals("4")) {
+                productionForAGivenNonTerminal();
+            } else if (command.strip().equals("5")) {
+                System.out.println("I dunno what that is");
+            } else if (command.strip().equals("0")) {
+                System.out.println("\nThanks for using the app! Goodbye");
+                break;
+            } else {
+                System.out.println("Invalid command!");
+            }
+        }
+    }
+
+    public Set<String> getNonTerminals() {
+        return nonTerminals;
+    }
+
+    public Set<String> getTerminals() {
+        return terminals;
+    }
+
+    public Set<Production> getProductions() {
+        return productions;
+    }
+
+    public String getStartingSymbol() {
+        return startingSymbol;
+    }
+
+    private void productionForAGivenNonTerminal() {
+        System.out.println("\tNon terminal:");
+        Scanner scanner = new Scanner(System.in);
+        String nonTerminal = scanner.nextLine().strip();
+        if (!nonTerminals.contains(nonTerminal)) {
+            System.out.println("Invalid non terminal\n");
+            return;
+        }
+
+        for (Production production : productions) {
+            if (production.getRightSide().contains(nonTerminal)) {
+                System.out.println(production);
+            }
+        }
+    }
 }
