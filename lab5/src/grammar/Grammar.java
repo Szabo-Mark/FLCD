@@ -11,8 +11,8 @@ public class Grammar {
     private final Set<String> terminals;
     private final Set<Production> productions;
     private String startingSymbol;
-    private Map<String, Set<String>> followFunction;
     private Map<String, Set<String>> firstFunction;
+    private Map<String, Set<String>> followFunction;
 
     public Grammar(String pathToFile) {
         nonTerminals = new HashSet<>();
@@ -23,6 +23,17 @@ public class Grammar {
         followFunction = new HashMap<>();
         firstFunction = new HashMap<>();
         readFromFile(pathToFile);
+        firstFunction.put("S", Set.of("(", "a"));
+        firstFunction.put("A", Set.of("+", EPSILON));
+        firstFunction.put("B", Set.of("(", "a"));
+        firstFunction.put("C", Set.of("*", EPSILON));
+        firstFunction.put("D", Set.of("(", "a"));
+        firstFunction.put("a", Set.of("a"));
+        firstFunction.put("+", Set.of("+"));
+        firstFunction.put("*", Set.of("*"));
+        firstFunction.put("(", Set.of("("));
+        firstFunction.put(")", Set.of(")"));
+        computeFollowFunction();
     }
 
     private void readFromFile(String pathToFile) {
@@ -138,42 +149,6 @@ public class Grammar {
         return null;
     }
 
-    public void showMenu() {
-        System.out.println("Hi!");
-        while (true) {
-            System.out.println("""
-                    
-                    Press 1 to print the set of non terminals
-                    Press 2 to print the set of terminals
-                    Press 3 to print the set of productions
-                    Press 4 to print productions for a given non terminal
-                    Press 5 to do the CFG check
-                    Press 0 to exit
-                    
-                    """);
-
-            System.out.println("Your command:");
-            Scanner scanner = new Scanner(System.in);
-            String command = scanner.nextLine();
-            if (command.strip().equals("1")) {
-                System.out.println(getNonTerminals());
-            } else if (command.strip().equals("2")) {
-                System.out.println(getTerminals());
-            } else if (command.strip().equals("3")) {
-                System.out.println(getProductions());
-            } else if (command.strip().equals("4")) {
-                productionForAGivenNonTerminal();
-            } else if (command.strip().equals("5")) {
-                System.out.println("I dunno what that is");
-            } else if (command.strip().equals("0")) {
-                System.out.println("\nThanks for using the app! Goodbye");
-                break;
-            } else {
-                System.out.println("Invalid command!");
-            }
-        }
-    }
-
     public Set<String> getNonTerminals() {
         return nonTerminals;
     }
@@ -190,19 +165,63 @@ public class Grammar {
         return startingSymbol;
     }
 
-    private void productionForAGivenNonTerminal() {
-        System.out.println("\tNon terminal:");
-        Scanner scanner = new Scanner(System.in);
-        String nonTerminal = scanner.nextLine().strip();
-        if (!nonTerminals.contains(nonTerminal)) {
-            System.out.println("Invalid non terminal\n");
-            return;
-        }
+    public Map<String, Set<String>> getFollowFunction() {
+        return followFunction;
+    }
 
-        for (Production production : productions) {
-            if (production.getRightSide().contains(nonTerminal)) {
-                System.out.println(production);
+    private void computeFollowFunction() {
+        List<Iteration> iterations = new ArrayList<>();
+        Map<String, Set<String>> mapOfFirstIteration = new HashMap<>();
+        nonTerminals.forEach((nonTerminal) -> {
+            Set<String> followSet = new HashSet<>();
+            mapOfFirstIteration.put(nonTerminal, followSet);
+        });
+        mapOfFirstIteration.get(startingSymbol).add(EPSILON);
+        iterations.add(new Iteration(mapOfFirstIteration));
+        int i = 1;
+        while (true) {
+            Iteration previousIteration = iterations.get(i - 1);
+            Iteration iteration = previousIteration.copy();
+            for (String nonTerminal : nonTerminals) {
+                List<Production> productions = getProductionsWithSymbolOnRHS(nonTerminal);
+                for (Production production : productions) {
+                    List<String> rhs = production.getRightSide();
+                    int index = rhs.indexOf(nonTerminal);
+                    if (index == rhs.size() - 1) { // if it is the last one in the production
+                        Set<String> followSetOfLHS = previousIteration.getFollowSet(production.getLeftSide()); // Fi-1(A)
+                        iteration.getFollowSet(nonTerminal).addAll(followSetOfLHS);
+                    } else {
+                        String nextSymbol = rhs.get(index + 1);
+                        Set<String> firstSetOfNextSymbol = firstFunction.get(nextSymbol);
+                        if (firstSetOfNextSymbol.contains(EPSILON)) {
+                            Set<String> copyOfFirstSetOfNextSymbol = new HashSet<>(firstSetOfNextSymbol);
+                            copyOfFirstSetOfNextSymbol.remove(EPSILON);
+                            iteration.getFollowSet(nonTerminal).addAll(copyOfFirstSetOfNextSymbol);
+                            Set<String> followSetOfLHS = previousIteration.getFollowSet(production.getLeftSide());
+                            iteration.getFollowSet(nonTerminal).addAll(followSetOfLHS);
+                        } else {
+                            iteration.getFollowSet(nonTerminal).addAll(firstSetOfNextSymbol);
+                        }
+                    }
+                }
             }
+            if (iteration.equals(iterations.get(i - 1))) {
+                followFunction = iteration.getFollowSets();
+                break;
+            }
+            i++;
+            iterations.add(iteration);
         }
     }
+
+    private List<Production> getProductionsWithSymbolOnRHS(String symbol) {
+        List<Production> productionsWithSymbolOnRHS = new ArrayList<>();
+        for (Production production : productions) {
+            if (production.getRightSide().contains(symbol)) {
+                productionsWithSymbolOnRHS.add(production);
+            }
+        }
+        return productionsWithSymbolOnRHS;
+    }
+
 }
