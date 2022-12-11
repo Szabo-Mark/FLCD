@@ -21,7 +21,7 @@ public class Main {
                     Press 3 to print the set of productions
                     Press 4 to print productions for a given non terminal
                     Press 5 to do the CFG check
-                    Press 6 to print follow function
+                    Press 6 to print follow sets
                     Press 0 to exit
                                         
                     """);
