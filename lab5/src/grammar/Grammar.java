@@ -170,14 +170,7 @@ public class Grammar {
     }
 
     private void computeFollowFunction() {
-        List<Iteration> iterations = new ArrayList<>();
-        Map<String, Set<String>> mapOfFirstIteration = new HashMap<>();
-        nonTerminals.forEach((nonTerminal) -> {
-            Set<String> followSet = new HashSet<>();
-            mapOfFirstIteration.put(nonTerminal, followSet);
-        });
-        mapOfFirstIteration.get(startingSymbol).add(EPSILON);
-        iterations.add(new Iteration(mapOfFirstIteration));
+        List<Iteration> iterations = initIterations();
         int i = 1;
         while (true) {
             Iteration previousIteration = iterations.get(i - 1);
@@ -185,24 +178,7 @@ public class Grammar {
             for (String nonTerminal : nonTerminals) {
                 List<Production> productions = getProductionsWithSymbolOnRHS(nonTerminal);
                 for (Production production : productions) {
-                    List<String> rhs = production.getRightSide();
-                    int index = rhs.indexOf(nonTerminal);
-                    if (index == rhs.size() - 1) { // if it is the last one in the production
-                        Set<String> followSetOfLHS = previousIteration.getFollowSet(production.getLeftSide()); // Fi-1(A)
-                        iteration.getFollowSet(nonTerminal).addAll(followSetOfLHS);
-                    } else {
-                        String nextSymbol = rhs.get(index + 1);
-                        Set<String> firstSetOfNextSymbol = firstFunction.get(nextSymbol);
-                        if (firstSetOfNextSymbol.contains(EPSILON)) {
-                            Set<String> copyOfFirstSetOfNextSymbol = new HashSet<>(firstSetOfNextSymbol);
-                            copyOfFirstSetOfNextSymbol.remove(EPSILON);
-                            iteration.getFollowSet(nonTerminal).addAll(copyOfFirstSetOfNextSymbol);
-                            Set<String> followSetOfLHS = previousIteration.getFollowSet(production.getLeftSide());
-                            iteration.getFollowSet(nonTerminal).addAll(followSetOfLHS);
-                        } else {
-                            iteration.getFollowSet(nonTerminal).addAll(firstSetOfNextSymbol);
-                        }
-                    }
+                    handleProduction(nonTerminal, production, previousIteration, iteration);
                 }
             }
             if (iteration.equals(iterations.get(i - 1))) {
@@ -211,6 +187,39 @@ public class Grammar {
             }
             i++;
             iterations.add(iteration);
+        }
+    }
+
+    private List<Iteration> initIterations() {
+        List<Iteration> iterations = new ArrayList<>();
+        Map<String, Set<String>> mapOfFirstIteration = new HashMap<>();
+        nonTerminals.forEach((nonTerminal) -> {
+            Set<String> followSet = new HashSet<>();
+            mapOfFirstIteration.put(nonTerminal, followSet);
+        });
+        mapOfFirstIteration.get(startingSymbol).add(EPSILON);
+        iterations.add(new Iteration(mapOfFirstIteration));
+        return iterations;
+    }
+
+    private void handleProduction(String nonTerminal, Production production, Iteration previousIteration, Iteration iteration) {
+        List<String> rhs = production.getRightSide();
+        int index = rhs.indexOf(nonTerminal);
+        if (index == rhs.size() - 1) { // if it is the last one in the production
+            Set<String> followSetOfLHS = previousIteration.getFollowSet(production.getLeftSide()); // Fi-1(A)
+            iteration.getFollowSet(nonTerminal).addAll(followSetOfLHS);
+        } else {
+            String nextSymbol = rhs.get(index + 1);
+            Set<String> firstSetOfNextSymbol = firstFunction.get(nextSymbol);
+            if (firstSetOfNextSymbol.contains(EPSILON)) { // if it contains epsilon -> (FIRST(beta) - EPSILON) U FOLLOW(A)
+                Set<String> copyOfFirstSetOfNextSymbol = new HashSet<>(firstSetOfNextSymbol);
+                copyOfFirstSetOfNextSymbol.remove(EPSILON);
+                iteration.getFollowSet(nonTerminal).addAll(copyOfFirstSetOfNextSymbol);
+                Set<String> followSetOfLHS = previousIteration.getFollowSet(production.getLeftSide());
+                iteration.getFollowSet(nonTerminal).addAll(followSetOfLHS);
+            } else { // FIRST(beta)
+                iteration.getFollowSet(nonTerminal).addAll(firstSetOfNextSymbol);
+            }
         }
     }
 
