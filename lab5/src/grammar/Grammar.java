@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Grammar {
     private static final String EPSILON = "EPSILON";
@@ -33,6 +34,7 @@ public class Grammar {
         firstFunction.put("*", Set.of("*"));
         firstFunction.put("(", Set.of("("));
         firstFunction.put(")", Set.of(")"));
+        firstFunction.put(EPSILON, Set.of(EPSILON));
         computeFollowFunction();
     }
 
@@ -202,6 +204,28 @@ public class Grammar {
         return iterations;
     }
 
+    private Set<String> concatenationOfLengthOne(List<String> input) {
+        Set<String> result = new HashSet<>();
+        if (input.size() == 0) {
+            result.add(EPSILON);
+            return result;
+        }
+        Set<String> firsts = firstFunction.get(input.get(0));
+        if (firsts.contains(EPSILON)) {
+            result.addAll(concatenationOfLengthOne(input.subList(1, input.size())));
+        }
+
+        // flatten
+        result.addAll(
+                firsts.stream()
+                        .filter(first -> !first.equals(EPSILON))
+                        .map(first -> firstFunction.get(first))
+                        .flatMap(Collection::stream)
+                        .collect(Collectors.toSet())
+        );
+        return result;
+    }
+
     private void handleProduction(String nonTerminal, Production production, Iteration previousIteration, Iteration iteration) {
         List<String> rhs = production.getRightSide();
         int index = rhs.indexOf(nonTerminal);
@@ -210,7 +234,8 @@ public class Grammar {
             iteration.getFollowSet(nonTerminal).addAll(followSetOfLHS);
         } else {
             String nextSymbol = rhs.get(index + 1);
-            Set<String> firstSetOfNextSymbol = firstFunction.get(nextSymbol);
+            //Set<String> firstSetOfNextSymbol = firstFunction.get(nextSymbol);
+            var firstSetOfNextSymbol = concatenationOfLengthOne(rhs.subList(index + 1, rhs.size()));
             if (firstSetOfNextSymbol.contains(EPSILON)) { // if it contains epsilon -> (FIRST(beta) - EPSILON) U FOLLOW(A)
                 Set<String> copyOfFirstSetOfNextSymbol = new HashSet<>(firstSetOfNextSymbol);
                 copyOfFirstSetOfNextSymbol.remove(EPSILON);
