@@ -12,8 +12,8 @@ public class Grammar {
     private final Set<String> terminals;
     private final Set<Production> productions;
     private String startingSymbol;
-    private Map<String, Set<String>> firstFunction;
     private Map<String, Set<String>> followFunction;
+    private Map<String, List<String>> firstFunction;
 
     public Grammar(String pathToFile) {
         nonTerminals = new HashSet<>();
@@ -24,7 +24,7 @@ public class Grammar {
         followFunction = new HashMap<>();
         firstFunction = new HashMap<>();
         readFromFile(pathToFile);
-        firstFunction.put("S", Set.of("(", "a"));
+        /*firstFunction.put("S", Set.of("(", "a"));
         firstFunction.put("A", Set.of("+", EPSILON));
         firstFunction.put("B", Set.of("(", "a"));
         firstFunction.put("C", Set.of("*", EPSILON));
@@ -34,7 +34,7 @@ public class Grammar {
         firstFunction.put("*", Set.of("*"));
         firstFunction.put("(", Set.of("("));
         firstFunction.put(")", Set.of(")"));
-        firstFunction.put(EPSILON, Set.of(EPSILON));
+        firstFunction.put(EPSILON, Set.of(EPSILON));*/
         computeFollowFunction();
     }
 
@@ -258,4 +258,54 @@ public class Grammar {
         return productionsWithSymbolOnRHS;
     }
 
+    private List<Production> productionForAGivenNonTerminal(String nonTerminal) {
+        List<Production> productionList = new ArrayList<>();
+
+        for (Production production : productions) {
+            if (production.getLeftSide().contains(nonTerminal)) {
+                productionList.add(production);
+            }
+        }
+        return productionList;
+    }
+
+    private List<String> first(String item) {
+        List<String> firstItemList = new ArrayList<>();
+        if (terminals.contains(item)) {
+            firstItemList.add(item);
+            return firstItemList;
+        } else {
+            List<Production> itemProductionList = productionForAGivenNonTerminal(item);
+
+            for (Production production : itemProductionList) {
+                if (production.getRightSide().contains("EPSILON")) {
+                    firstItemList.add("EPSILON");
+                } else {
+                    List<String> provisionalFirstList;
+                    int index = 0;
+                    provisionalFirstList = first(production.getRightSide().get(index));
+                    if (provisionalFirstList.contains("EPSILON")) {
+                        while (provisionalFirstList.contains("EPSILON")) {
+                            firstItemList.addAll(provisionalFirstList);
+                            index = index + 1;
+                            provisionalFirstList = first(production.getRightSide().get(index));
+                        }
+                    } else {
+                        firstItemList.addAll(provisionalFirstList);
+                    }
+                }
+            }
+            firstFunction.put(item, firstItemList);
+        }
+        return firstItemList;
+    }
+
+    public void firstForAll() {
+        for (String nonTerminal: nonTerminals)
+        {
+            if (!firstFunction.containsKey(nonTerminal))
+                first(nonTerminal);
+        }
+        System.out.println(firstFunction);
+    }
 }
