@@ -35,6 +35,7 @@ public class Grammar {
         firstFunction.put("(", Set.of("("));
         firstFunction.put(")", Set.of(")"));
         firstFunction.put(EPSILON, Set.of(EPSILON));*/
+        firstForAll();
         computeFollowFunction();
     }
 
@@ -151,26 +152,6 @@ public class Grammar {
         return null;
     }
 
-    public Set<String> getNonTerminals() {
-        return nonTerminals;
-    }
-
-    public Set<String> getTerminals() {
-        return terminals;
-    }
-
-    public Set<Production> getProductions() {
-        return productions;
-    }
-
-    public String getStartingSymbol() {
-        return startingSymbol;
-    }
-
-    public Map<String, Set<String>> getFollowFunction() {
-        return followFunction;
-    }
-
     private void computeFollowFunction() {
         List<Iteration> iterations = initIterations();
         int i = 1;
@@ -204,26 +185,14 @@ public class Grammar {
         return iterations;
     }
 
-    private Set<String> concatenationOfLengthOne(List<String> input) {
-        Set<String> result = new HashSet<>();
-        if (input.size() == 0) {
-            result.add(EPSILON);
-            return result;
+    private List<Production> getProductionsWithSymbolOnRHS(String symbol) {
+        List<Production> productionsWithSymbolOnRHS = new ArrayList<>();
+        for (Production production : productions) {
+            if (production.getRightSide().contains(symbol)) {
+                productionsWithSymbolOnRHS.add(production);
+            }
         }
-        Set<String> firsts = firstFunction.get(input.get(0));
-        if (firsts.contains(EPSILON)) {
-            result.addAll(concatenationOfLengthOne(input.subList(1, input.size())));
-        }
-
-        // flatten
-        result.addAll(
-                firsts.stream()
-                        .filter(first -> !first.equals(EPSILON))
-                        .map(first -> firstFunction.get(first))
-                        .flatMap(Collection::stream)
-                        .collect(Collectors.toSet())
-        );
-        return result;
+        return productionsWithSymbolOnRHS;
     }
 
     private void handleProduction(String nonTerminal, Production production, Iteration previousIteration, Iteration iteration) {
@@ -248,25 +217,26 @@ public class Grammar {
         }
     }
 
-    private List<Production> getProductionsWithSymbolOnRHS(String symbol) {
-        List<Production> productionsWithSymbolOnRHS = new ArrayList<>();
-        for (Production production : productions) {
-            if (production.getRightSide().contains(symbol)) {
-                productionsWithSymbolOnRHS.add(production);
-            }
+    private Set<String> concatenationOfLengthOne(List<String> input) {
+        Set<String> result = new HashSet<>();
+        if (input.size() == 0) {
+            result.add(EPSILON);
+            return result;
         }
-        return productionsWithSymbolOnRHS;
-    }
-
-    private List<Production> productionForAGivenNonTerminal(String nonTerminal) {
-        List<Production> productionList = new ArrayList<>();
-
-        for (Production production : productions) {
-            if (production.getLeftSide().contains(nonTerminal)) {
-                productionList.add(production);
-            }
+        Set<String> firsts = firstFunction.get(input.get(0));
+        if (firsts.contains(EPSILON)) {
+            result.addAll(concatenationOfLengthOne(input.subList(1, input.size())));
         }
-        return productionList;
+
+        // flatten
+        result.addAll(
+                firsts.stream()
+                        .filter(first -> !first.equals(EPSILON))
+                        .map(first -> firstFunction.get(first))
+                        .flatMap(Collection::stream)
+                        .collect(Collectors.toSet())
+        );
+        return result;
     }
 
     private Set<String> first(String item) {
@@ -300,11 +270,43 @@ public class Grammar {
         return firstItemSet;
     }
 
+    private List<Production> productionForAGivenNonTerminal(String nonTerminal) {
+        List<Production> productionList = new ArrayList<>();
+
+        for (Production production : productions) {
+            if (production.getLeftSide().contains(nonTerminal)) {
+                productionList.add(production);
+            }
+        }
+        return productionList;
+    }
+
     public void firstForAll() {
+        terminals.forEach((terminal -> firstFunction.put(terminal, Set.of(terminal))));
         for (String nonTerminal : nonTerminals) {
             if (!firstFunction.containsKey(nonTerminal))
                 first(nonTerminal);
         }
         System.out.println(firstFunction);
+    }
+
+    public Set<String> getNonTerminals() {
+        return nonTerminals;
+    }
+
+    public Set<String> getTerminals() {
+        return terminals;
+    }
+
+    public Set<Production> getProductions() {
+        return productions;
+    }
+
+    public String getStartingSymbol() {
+        return startingSymbol;
+    }
+
+    public Map<String, Set<String>> getFollowFunction() {
+        return followFunction;
     }
 }
