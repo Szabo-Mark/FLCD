@@ -13,7 +13,7 @@ public class Grammar {
     private final Set<Production> productions;
     private String startingSymbol;
     private Map<String, Set<String>> followFunction;
-    private Map<String, List<String>> firstFunction;
+    private Map<String, Set<String>> firstFunction;
 
     public Grammar(String pathToFile) {
         nonTerminals = new HashSet<>();
@@ -269,40 +269,39 @@ public class Grammar {
         return productionList;
     }
 
-    private List<String> first(String item) {
-        List<String> firstItemList = new ArrayList<>();
+    private Set<String> first(String item) {
+        Set<String> firstItemSet = new HashSet<>();
         if (terminals.contains(item)) {
-            firstItemList.add(item);
-            return firstItemList;
+            firstItemSet.add(item);
+            return firstItemSet;
         } else {
-            List<Production> itemProductionList = productionForAGivenNonTerminal(item);
+            List<Production> itemProductionSet = productionForAGivenNonTerminal(item);
 
-            for (Production production : itemProductionList) {
+            for (Production production : itemProductionSet) {
                 if (production.getRightSide().contains("EPSILON")) {
-                    firstItemList.add("EPSILON");
+                    firstItemSet.add("EPSILON");
                 } else {
-                    List<String> provisionalFirstList;
+                    Set<String> provisionalFirstList;
                     int index = 0;
                     provisionalFirstList = first(production.getRightSide().get(index));
                     if (provisionalFirstList.contains("EPSILON")) {
                         while (provisionalFirstList.contains("EPSILON")) {
-                            firstItemList.addAll(provisionalFirstList);
+                            firstItemSet.addAll(provisionalFirstList);
                             index = index + 1;
                             provisionalFirstList = first(production.getRightSide().get(index));
                         }
                     } else {
-                        firstItemList.addAll(provisionalFirstList);
+                        firstItemSet.addAll(provisionalFirstList);
                     }
                 }
             }
-            firstFunction.put(item, firstItemList);
+            firstFunction.put(item, firstItemSet);
         }
-        return firstItemList;
+        return firstItemSet;
     }
 
     public void firstForAll() {
-        for (String nonTerminal: nonTerminals)
-        {
+        for (String nonTerminal : nonTerminals) {
             if (!firstFunction.containsKey(nonTerminal))
                 first(nonTerminal);
         }
