@@ -6,8 +6,9 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static grammar.Constants.EPSILON;
+
 public class Grammar {
-    private static final String EPSILON = "EPSILON";
     private final Set<String> nonTerminals;
     private final Set<String> terminals;
     private final Set<Production> productions;

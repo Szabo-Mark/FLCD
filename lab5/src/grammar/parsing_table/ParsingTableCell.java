@@ -3,6 +3,8 @@ package grammar.parsing_table;
 import java.util.ArrayList;
 import java.util.List;
 
+import static grammar.Constants.*;
+
 public class ParsingTableCell {
     private List<String> rhsOfProduction;
     private int numberOfProduction;
@@ -18,15 +20,15 @@ public class ParsingTableCell {
     }
 
     public static ParsingTableCell getErrorCell() {
-        return new ParsingTableCell(List.of("ERROR"), 0);
+        return new ParsingTableCell(List.of(ERROR), 0);
     }
 
     public static ParsingTableCell getAcceptCell(){
-        return new ParsingTableCell(List.of("ACCEPT"), 0);
+        return new ParsingTableCell(List.of(ACCEPT), 0);
     }
 
     public static ParsingTableCell getPopCell(){
-        return new ParsingTableCell(List.of("POP"), 0);
+        return new ParsingTableCell(List.of(POP), 0);
     }
 
     public List<String> getRhsOfProduction() {
