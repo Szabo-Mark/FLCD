@@ -1,4 +1,4 @@
-package grammar;
+package utils;
 
 public class Constants {
     public static final String EPSILON = "EPSILON";

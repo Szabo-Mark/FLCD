@@ -1,9 +1,9 @@
-package grammar;
+package ll1;
 
 import java.util.*;
 
 public class Iteration {
-    private Map<String, Set<String>> followSets;
+    private final Map<String, Set<String>> followSets;
 
     public Iteration(Map<String, Set<String>> followSets) {
         this.followSets = followSets;
