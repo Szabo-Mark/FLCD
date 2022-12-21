@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import static utils.Constants.EPSILON;
+
 public class Configuration {
 
     private ParsingTable parsingTable;
@@ -20,12 +22,14 @@ public class Configuration {
 
     public void push() {
         List<String> cellResult = parsingTable.get(workingStack.get(0), inputStack.get(0)).getRhsOfProduction();
-        workingStack.remove(0);
-        List<String> newWorkingStack = new ArrayList<>();
-        newWorkingStack.addAll(cellResult);
-        newWorkingStack.addAll(workingStack);
-        workingStack = newWorkingStack;
         outputStack.add(String.valueOf(parsingTable.get(workingStack.get(0), inputStack.get(0)).getNumberOfProduction()));
+        workingStack.remove(0);
+        if(!cellResult.equals(List.of(EPSILON))){
+            List<String> newWorkingStack = new ArrayList<>();
+            newWorkingStack.addAll(cellResult);
+            newWorkingStack.addAll(workingStack);
+            workingStack = newWorkingStack;
+        }
     }
 
     public void pop() {
@@ -42,11 +46,11 @@ public class Configuration {
         }
     }
 
-    public String getHeadOfInputStack(){
+    public String getHeadOfInputStack() {
         return inputStack.get(0);
     }
 
-    public String getHeadOfWorkingStack(){
+    public String getHeadOfWorkingStack() {
         return workingStack.get(0);
     }
 
