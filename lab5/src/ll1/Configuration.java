@@ -42,6 +42,14 @@ public class Configuration {
         }
     }
 
+    public String getHeadOfInputStack(){
+        return inputStack.get(0);
+    }
+
+    public String getHeadOfWorkingStack(){
+        return workingStack.get(0);
+    }
+
 
     public ParsingTable getParsingTable() {
         return parsingTable;

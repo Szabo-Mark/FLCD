@@ -1,7 +1,9 @@
 import grammar.Grammar;
 import ll1.FirstAndFollowCalculator;
+import ll1.Parser;
 import ll1.ParsingTable;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -10,8 +12,10 @@ public class Main {
         Grammar grammar = new Grammar("resources/grammar.txt");
         FirstAndFollowCalculator firstAndFollowCalculator = new FirstAndFollowCalculator(grammar);
         ParsingTable parsingTable = new ParsingTable(grammar, firstAndFollowCalculator);
+        Parser parser = new Parser(parsingTable, grammar);
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
+        List<String> sequence = List.of("a", "*", "(", "a", "+", "a", ")");
         int option;
         while (running) {
             option = scanner.nextInt();
@@ -24,6 +28,7 @@ public class Main {
                 case 5 -> System.out.println(firstAndFollowCalculator.getFirstFunctionString());
                 case 6 -> System.out.println(firstAndFollowCalculator.getFollowFunctionString());
                 case 7 -> System.out.println(parsingTable);
+                case 8 -> System.out.println(parser.parseSequence(sequence));
                 default -> {
                     System.out.println("Bye");
                     running = false;
