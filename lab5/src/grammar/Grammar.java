@@ -6,8 +6,10 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
@@ -19,6 +21,7 @@ public class Grammar {
     private final Set<String> terminals;
     private final List<Production> productions;
     private String startingSymbol;
+    private final Map<Production, Integer> productionIndex;
 
     public Grammar(String pathToFile) {
         nonTerminals = new HashSet<>();
@@ -26,6 +29,17 @@ public class Grammar {
         productions = new ArrayList<>();
         startingSymbol = null;
         readFromFile(pathToFile);
+        productionIndex = initProductionIndex();
+    }
+
+    private Map<Production, Integer> initProductionIndex() {
+        Map<Production, Integer> mapProductionToIndex = new HashMap<>();
+        int index = 1;
+        for (Production production : productions) {
+            mapProductionToIndex.put(production, index);
+            index++;
+        }
+        return mapProductionToIndex;
     }
 
     private void readFromFile(String pathToFile) {
@@ -162,5 +176,9 @@ public class Grammar {
 
     public String getStartingSymbol() {
         return startingSymbol;
+    }
+
+    public Map<Production, Integer> getProductionIndex() {
+        return productionIndex;
     }
 }

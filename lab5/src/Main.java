@@ -3,19 +3,26 @@ import ll1.FirstAndFollowCalculator;
 import ll1.Parser;
 import ll1.ParsingTable;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
 public class Main {
-    public static void main(String[] args) {
+    private final static String PATH_TO_G1 = "resources/g1.txt";
+    private final static String PATH_TO_SEQ = "resources/seq.txt";
+
+    public static void main(String[] args) throws IOException {
         System.out.println("Hi!");
-        Grammar grammar = new Grammar("resources/grammar.txt");
+        Grammar grammar = new Grammar(PATH_TO_G1);
         FirstAndFollowCalculator firstAndFollowCalculator = new FirstAndFollowCalculator(grammar);
         ParsingTable parsingTable = new ParsingTable(grammar, firstAndFollowCalculator);
         Parser parser = new Parser(parsingTable, grammar);
         Scanner scanner = new Scanner(System.in);
         boolean running = true;
-        List<String> sequence = List.of("a", "*", "(", "a", "+", "a", ")");
+        printMenu();
         int option;
         while (running) {
             option = scanner.nextInt();
@@ -28,13 +35,33 @@ public class Main {
                 case 5 -> System.out.println(firstAndFollowCalculator.getFirstFunctionString());
                 case 6 -> System.out.println(firstAndFollowCalculator.getFollowFunctionString());
                 case 7 -> System.out.println(parsingTable);
-                case 8 -> System.out.println(parser.parseSequence(sequence));
+                case 8 -> checkSequence(parser, PATH_TO_SEQ);
                 default -> {
                     System.out.println("Bye");
                     running = false;
                 }
             }
         }
+    }
+
+    private static void checkSequence(Parser parser, String pathToSequence) throws IOException {
+        List<String> sequence = new ArrayList<>();
+        BufferedReader bufferedReader = new BufferedReader(new FileReader(pathToSequence));
+        String line = bufferedReader.readLine();
+        while (line != null) {
+            sequence.add(line);
+            line = bufferedReader.readLine();
+        }
+        System.out.println(parser.parseSequence(sequence));
+    }
+
+
+    private static void productionForAGivenNonTerminal(Grammar grammar) {
+        System.out.println("\tNon terminal:");
+        Scanner scanner = new Scanner(System.in);
+        String nonTerminal = scanner.nextLine().strip();
+        grammar.getProductionForNonTerminal(nonTerminal)
+                .ifPresent(System.out::println);
     }
 
     private static void printMenu() {
@@ -47,16 +74,9 @@ public class Main {
                 Press 5 to print first sets
                 Press 6 to print follow sets
                 Press 7 to print parsing table
+                Press 8 to check if g1.txt sequence works
                 Press anything else and you exit.
                                 
                 """);
-    }
-
-    private static void productionForAGivenNonTerminal(Grammar grammar) {
-        System.out.println("\tNon terminal:");
-        Scanner scanner = new Scanner(System.in);
-        String nonTerminal = scanner.nextLine().strip();
-        grammar.getProductionForNonTerminal(nonTerminal)
-                .ifPresent(System.out::println);
     }
 }

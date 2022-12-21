@@ -18,28 +18,16 @@ public class ParsingTable {
     private final Set<String> symbols;
     private final FirstAndFollowCalculator firstAndFollowCalculator;
     private final Map<String, Map<String, ParsingTableCell>> parsingTable;
-    private final Map<Production, Integer> productionIndex;
 
     public ParsingTable(Grammar grammar, FirstAndFollowCalculator firstAndFollowCalculator) {
         this.grammar = grammar;
         this.firstAndFollowCalculator = firstAndFollowCalculator;
         parsingTable = new HashMap<>();
-        productionIndex = initProductionIndex();
 
         symbols = new HashSet<>(grammar.getNonTerminals());
         symbols.addAll(grammar.getTerminals());
         symbols.add("$");
         computeParsingTable();
-    }
-
-    private Map<Production, Integer> initProductionIndex() {
-        Map<Production, Integer> mapProductionToIndex = new HashMap<>();
-        int index = 1;
-        for (Production production : grammar.getProductions()) {
-            mapProductionToIndex.put(production, index);
-            index++;
-        }
-        return mapProductionToIndex;
     }
 
     private void computeParsingTable() {
@@ -49,17 +37,17 @@ public class ParsingTable {
             if (!firstOfRHS.contains(EPSILON)) {
                 for (String symbol : firstOfRHS) {
                     put(production.getLeftSide(), symbol,
-                            new ParsingTableCell(production.getRightSide(), productionIndex.get(production)));
+                            new ParsingTableCell(production.getRightSide(), grammar.getProductionIndex().get(production)));
                 }
             } else {
                 Set<String> followOfLHS = firstAndFollowCalculator.getFollowFunction().get(production.getLeftSide());
                 for (String symbol : followOfLHS) {
                     if (Objects.equals(symbol, EPSILON)) {
                         put(production.getLeftSide(), "$",
-                                new ParsingTableCell(production.getRightSide(), productionIndex.get(production)));
+                                new ParsingTableCell(production.getRightSide(), grammar.getProductionIndex().get(production)));
                     } else {
                         put(production.getLeftSide(), symbol,
-                                new ParsingTableCell(production.getRightSide(), productionIndex.get(production)));
+                                new ParsingTableCell(production.getRightSide(), grammar.getProductionIndex().get(production)));
                     }
                 }
             }
