@@ -17,13 +17,13 @@ import static utils.Constants.EPSILON;
 public class Grammar {
     private final Set<String> nonTerminals;
     private final Set<String> terminals;
-    private final Set<Production> productions;
+    private final List<Production> productions;
     private String startingSymbol;
 
     public Grammar(String pathToFile) {
         nonTerminals = new HashSet<>();
         terminals = new HashSet<>();
-        productions = new HashSet<>();
+        productions = new ArrayList<>();
         startingSymbol = null;
         readFromFile(pathToFile);
     }
@@ -156,7 +156,7 @@ public class Grammar {
         return terminals;
     }
 
-    public Set<Production> getProductions() {
+    public List<Production> getProductions() {
         return productions;
     }
 

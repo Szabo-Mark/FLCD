@@ -34,7 +34,7 @@ public class ParsingTable {
 
     private Map<Production, Integer> initProductionIndex() {
         Map<Production, Integer> mapProductionToIndex = new HashMap<>();
-        int index = 0;
+        int index = 1;
         for (Production production : grammar.getProductions()) {
             mapProductionToIndex.put(production, index);
             index++;
