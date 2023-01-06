@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-import static utils.Constants.EPSILON;
+import static ll1.Constants.EPSILON;
 
 public class Configuration {
 

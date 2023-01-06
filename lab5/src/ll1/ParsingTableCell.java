@@ -3,9 +3,9 @@ package ll1;
 import java.util.List;
 import java.util.Objects;
 
-import static utils.Constants.ACCEPT;
-import static utils.Constants.ERROR;
-import static utils.Constants.POP;
+import static ll1.Constants.ACCEPT;
+import static ll1.Constants.ERROR;
+import static ll1.Constants.POP;
 
 public class ParsingTableCell {
     private List<String> rhsOfProduction;

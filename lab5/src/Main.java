@@ -52,7 +52,7 @@ public class Main {
             sequence.add(line);
             line = bufferedReader.readLine();
         }
-        System.out.println(parser.parseSequence(sequence));
+        System.out.println(parser.getSequenceOfProductions(sequence));
     }
 
 

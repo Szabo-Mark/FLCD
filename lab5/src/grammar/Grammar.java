@@ -1,7 +1,5 @@
 package grammar;
 
-import ll1.ParsingTable;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -14,32 +12,23 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
-import static utils.Constants.EPSILON;
+import static ll1.Constants.EPSILON;
 
 public class Grammar {
     private final Set<String> nonTerminals;
     private final Set<String> terminals;
     private final List<Production> productions;
-    private String startingSymbol;
     private final Map<Production, Integer> productionIndex;
+    private int indexOfProduction = 0;
+    private String startingSymbol;
 
     public Grammar(String pathToFile) {
         nonTerminals = new HashSet<>();
         terminals = new HashSet<>();
         productions = new ArrayList<>();
         startingSymbol = null;
+        productionIndex = new HashMap<>();
         readFromFile(pathToFile);
-        productionIndex = initProductionIndex();
-    }
-
-    private Map<Production, Integer> initProductionIndex() {
-        Map<Production, Integer> mapProductionToIndex = new HashMap<>();
-        int index = 1;
-        for (Production production : productions) {
-            mapProductionToIndex.put(production, index);
-            index++;
-        }
-        return mapProductionToIndex;
     }
 
     private void readFromFile(String pathToFile) {
@@ -111,12 +100,15 @@ public class Grammar {
                 }
                 rightSideList.add(tkn);
             }
-            productions.add(new Production(leftSide, rightSideList));
+            Production production = new Production(leftSide, rightSideList);
+            indexOfProduction++;
+            productionIndex.put(production, indexOfProduction);
+            productions.add(production);
         }
         return Optional.empty();
     }
 
-    public Optional<Production> getProductionForNonTerminal(String nonTerminal){
+    public Optional<Production> getProductionForNonTerminal(String nonTerminal) {
         return productions.stream()
                 .filter(production -> production.getRightSide().contains(nonTerminal))
                 .findFirst();
@@ -180,5 +172,14 @@ public class Grammar {
 
     public Map<Production, Integer> getProductionIndex() {
         return productionIndex;
+    }
+
+    public Production getProductionWithIndex(int index) {
+        return productionIndex.entrySet()
+                .stream()
+                .filter(entry -> entry.getValue() == index)
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElseThrow();
     }
 }

@@ -10,7 +10,7 @@ import java.util.Objects;
 import java.util.Set;
 
 import static ll1.FirstAndFollowCalculator.concatenationOfLengthOne;
-import static utils.Constants.EPSILON;
+import static ll1.Constants.EPSILON;
 
 
 public class ParsingTable {

@@ -12,7 +12,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static utils.Constants.EPSILON;
+import static ll1.Constants.EPSILON;
 
 public class FirstAndFollowCalculator {
     private final Grammar grammar;
