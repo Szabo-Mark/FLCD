@@ -11,9 +11,10 @@ public class Configuration {
     private ParsingTable parsingTable;
     private List<String> inputStack;
     private List<String> workingStack;
-    private List<String> outputStack;
+    private List<Integer> outputStack;
 
-    public Configuration(ParsingTable parsingTable, List<String> inputStack, List<String> workingStack, List<String> outputStack) {
+    public Configuration(ParsingTable parsingTable, List<String> inputStack, List<String> workingStack,
+                         List<Integer> outputStack) {
         this.parsingTable = parsingTable;
         this.inputStack = inputStack;
         this.workingStack = workingStack;
@@ -22,9 +23,9 @@ public class Configuration {
 
     public void push() {
         List<String> cellResult = parsingTable.get(workingStack.get(0), inputStack.get(0)).getRhsOfProduction();
-        outputStack.add(String.valueOf(parsingTable.get(workingStack.get(0), inputStack.get(0)).getNumberOfProduction()));
+        outputStack.add(parsingTable.get(workingStack.get(0), inputStack.get(0)).getNumberOfProduction());
         workingStack.remove(0);
-        if(!cellResult.equals(List.of(EPSILON))){
+        if (!cellResult.equals(List.of(EPSILON))) {
             List<String> newWorkingStack = new ArrayList<>();
             newWorkingStack.addAll(cellResult);
             newWorkingStack.addAll(workingStack);
@@ -38,7 +39,9 @@ public class Configuration {
     }
 
     public Boolean accept() {
-        if (inputStack.size() == 1 && Objects.equals(inputStack.get(0), "$") && workingStack.size() == 1 && Objects.equals(workingStack.get(0), "$") && outputStack.size() == 1 && Objects.equals(outputStack.get(0), "pi")) {
+        if (inputStack.size() == 1 && Objects.equals(inputStack.get(0), "$") && workingStack.size() == 1 &&
+                Objects.equals(workingStack.get(0), "$") && outputStack.size() == 1 &&
+                Objects.equals(outputStack.get(0), "pi")) {
             System.out.println("acc");
             return true;
         } else {
@@ -67,7 +70,7 @@ public class Configuration {
         return workingStack;
     }
 
-    public List<String> getOutputStack() {
+    public List<Integer> getOutputStack() {
         return outputStack;
     }
 

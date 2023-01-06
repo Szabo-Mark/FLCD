@@ -4,6 +4,7 @@ import grammar.Grammar;
 import grammar.Production;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
@@ -16,13 +17,13 @@ public class Parser {
         this.grammar = grammar;
     }
 
-    public List<String> getSequenceOfProductions(List<String> sequence) {
+    public List<Integer> getSequenceOfProductions(List<String> sequence) {
         List<String> inputStack = new ArrayList<>(sequence);
         inputStack.add("$");
         List<String> workingStack = new ArrayList<>();
         workingStack.add(grammar.getStartingSymbol());
         workingStack.add("$");
-        List<String> outputStack = new ArrayList<>();
+        List<Integer> outputStack = new ArrayList<>();
         Configuration configuration = new Configuration(parsingTable, inputStack, workingStack, outputStack);
 
         boolean accepted = false;
@@ -51,9 +52,35 @@ public class Parser {
         return null;
     }
 
-    public List<TreeNode> getTree(List<String> sequence){
-        List<String> sequenceOfProductions = getSequenceOfProductions(sequence);
+    public List<TreeNode> getTree(List<String> sequence) {
+        List<Integer> sequenceOfProductions = getSequenceOfProductions(sequence);
         return convertSequenceOfProductionsIntoTree(sequenceOfProductions);
+    }
+
+    public List<TreeNode> convertSequenceOfProductionsIntoTree(List<Integer> sequenceOfProductions) {
+        List<TreeNode> treeMatrix = new ArrayList<>();
+        treeMatrix.add(new TreeNode(1, grammar.getStartingSymbol(), null, new LinkedList<>()));
+        for (Integer indexOfProduction : sequenceOfProductions) {
+            TreeNode parentNode = getLeftMostNonTerminalNodeFromTree(treeMatrix.get(0));
+            Production production = grammar.getProductionWithIndex(indexOfProduction);
+            List<String> productionRightSide = production.getRightSide();
+            int index = treeMatrix.size() + 1; //new nodes will start with this index
+            for (int childCount = 0; childCount < productionRightSide.size(); childCount++) {
+                TreeNode newChild;
+                String info = productionRightSide.get(childCount);
+                if (grammar.getNonTerminals().contains(info)) {
+                    //if it is a non-terminal we'll put an empty list for children
+                    newChild = new TreeNode(index + childCount, productionRightSide.get(childCount), parentNode,
+                            new LinkedList<>());
+                } else {
+                    //if it is a terminal we put null.
+                    newChild = new TreeNode(index + childCount, productionRightSide.get(childCount), parentNode, null);
+                }
+                treeMatrix.add(newChild);
+                parentNode.getChildren().add(newChild);
+            }
+        }
+        return treeMatrix;
     }
 
     private boolean isSpecialCase(ParsingTableCell parsingTableCell) {
@@ -62,26 +89,26 @@ public class Parser {
                 || Objects.equals(parsingTableCell, ParsingTableCell.getErrorCell());
     }
 
-    private List<TreeNode> convertSequenceOfProductionsIntoTree(List<Integer> sequenceOfProductions) {
-        List<TreeNode> treeMatrix = new ArrayList<>();
-        treeMatrix.add(new TreeNode(1, grammar.getStartingSymbol(), 0, 0));
-        for (Integer indexOfProduction : sequenceOfProductions) {
-            TreeNode parentNode = getLeftMostNonTerminalNodeFromTree(treeMatrix);
-            Production production = grammar.getProductionWithIndex(indexOfProduction);
-            List<String> productionRightSide = production.getRightSide();
-            int index = treeMatrix.size(); //new nodes will start with this index
-            for (int siblingCount = 0; siblingCount < productionRightSide.size(); siblingCount++) {
-                treeMatrix.add(new TreeNode(index, productionRightSide.get(siblingCount), parentNode.getIndex(),
-                        siblingCount));
+    private TreeNode getLeftMostNonTerminalNodeFromTree(TreeNode currentNode) {
+        if (currentNode != null) { //this is dfs basically
+            if (currentNode.getChildren() != null) {
+                if (currentNode.getChildren().isEmpty()) { //if leaf but non-terminal we found it.
+                    return currentNode;
+                } else {
+                    for (TreeNode childNode : currentNode.getChildren()) {
+                        //we check for each child starting from left to right.
+                        TreeNode node = getLeftMostNonTerminalNodeFromTree(childNode);
+                        if (node != null) {
+                            if (node.getChildren() != null && node.getChildren().isEmpty()) {
+                                return node; //probably im repeating myself here, but it's too late for me to think
+                                // better
+                            }
+                        }
+                    }
+                }
             }
+            //if the children list is null -> leaf with a terminal -> we skip.
         }
-        return treeMatrix;
-    }
-
-    private TreeNode getLeftMostNonTerminalNodeFromTree(List<TreeNode> treeMatrix) {
-        return treeMatrix.stream()
-                .filter(treeNode -> grammar.getNonTerminals().contains(treeNode.getInfo()))
-                .findFirst()
-                .orElseThrow();
+        return null;
     }
 }

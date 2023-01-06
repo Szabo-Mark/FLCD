@@ -52,7 +52,9 @@ public class Main {
             sequence.add(line);
             line = bufferedReader.readLine();
         }
-        System.out.println(parser.getSequenceOfProductions(sequence));
+        List<Integer> sequenceOfProductions = parser.getSequenceOfProductions(sequence);
+        System.out.println(sequenceOfProductions);
+        System.out.println(parser.convertSequenceOfProductionsIntoTree(sequenceOfProductions));
     }
 
 
