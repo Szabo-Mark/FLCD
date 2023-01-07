@@ -153,7 +153,6 @@ public class FirstAndFollowCalculator {
 
     private List<Production> productionForAGivenNonTerminal(String nonTerminal) {
         List<Production> productionList = new ArrayList<>();
-
         for (Production production : grammar.getProductions()) {
             if (production.getLeftSide().contains(nonTerminal)) {
                 productionList.add(production);
