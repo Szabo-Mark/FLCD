@@ -45,6 +45,7 @@ public class Parser {
                         go = false;
                         accepted = true;
                     } else {
+                        System.out.println("ParsingTable error at: "+ configuration.getHeadOfWorkingStack() + ',' + configuration.getHeadOfInputStack());
                         go = false;
                     }
                 }
