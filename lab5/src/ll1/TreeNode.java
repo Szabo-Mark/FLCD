@@ -49,7 +49,7 @@ public class TreeNode {
 
     @Override
     public String toString() {
-        return String.format("%-2s  %-10s  %-2s",
+        return String.format("%-7s  %-10s  %-2s",
                 index, info, parent != null ? parent.getIndex() : 0) + '\n';
     }
 }

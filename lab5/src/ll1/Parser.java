@@ -3,12 +3,16 @@ package ll1;
 import grammar.Grammar;
 import grammar.Production;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
 public class Parser {
+    private final static String OUTPUT_FILE_PATH = "resources/output.txt";
+
     private ParsingTable parsingTable;
     private Grammar grammar;
 
@@ -80,6 +84,7 @@ public class Parser {
                 parentNode.getChildren().add(newChild);
             }
         }
+        writeToFile(treeMatrix);
         return treeMatrix;
     }
 
@@ -110,5 +115,21 @@ public class Parser {
             //if the children list is null -> leaf with a terminal -> we skip.
         }
         return null;
+    }
+
+    private void writeToFile(List<TreeNode> matrix) {
+        try {
+            String head = "Index\tInfo\tParent node" + '\n';
+            FileWriter fileWriter = new FileWriter(OUTPUT_FILE_PATH);
+            fileWriter.write(head);
+            for (TreeNode treeNode : matrix) {
+                fileWriter.write(treeNode.toString() + "\n");
+            }
+            fileWriter.close();
+            System.out.println("Successfully wrote to the file.");
+        } catch (IOException e) {
+            System.out.println("An error occurred.");
+            e.printStackTrace();
+        }
     }
 }
