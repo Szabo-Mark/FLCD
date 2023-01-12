@@ -38,7 +38,7 @@ public class Configuration {
         inputStack.remove(0);
     }
 
-    public Boolean accept() {
+    public boolean accept() {
         if (inputStack.size() == 1 && Objects.equals(inputStack.get(0), "$") && workingStack.size() == 1 &&
                 Objects.equals(workingStack.get(0), "$") && outputStack.size() == 1 &&
                 Objects.equals(outputStack.get(0), "pi")) {
@@ -57,23 +57,9 @@ public class Configuration {
         return workingStack.get(0);
     }
 
-
-    public ParsingTable getParsingTable() {
-        return parsingTable;
-    }
-
-    public List<String> getInputStack() {
-        return inputStack;
-    }
-
-    public List<String> getWorkingStack() {
-        return workingStack;
-    }
-
     public List<Integer> getOutputStack() {
         return outputStack;
     }
-
 
     @Override
     public String toString() {

@@ -10,6 +10,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Objects;
 
+import static ll1.Constants.END_SYMBOL;
+
 public class Parser {
     private final static String OUTPUT_FILE_PATH = "resources/output.txt";
 
@@ -23,10 +25,10 @@ public class Parser {
 
     public List<Integer> getSequenceOfProductions(List<String> sequence) {
         List<String> inputStack = new ArrayList<>(sequence);
-        inputStack.add("$");
+        inputStack.add(END_SYMBOL);
         List<String> workingStack = new ArrayList<>();
         workingStack.add(grammar.getStartingSymbol());
-        workingStack.add("$");
+        workingStack.add(END_SYMBOL);
         List<Integer> outputStack = new ArrayList<>();
         Configuration configuration = new Configuration(parsingTable, inputStack, workingStack, outputStack);
 
@@ -45,7 +47,7 @@ public class Parser {
                         go = false;
                         accepted = true;
                     } else {
-                        System.out.println("ParsingTable error at: "+ configuration.getHeadOfWorkingStack() + ',' + configuration.getHeadOfInputStack());
+                        System.out.println("ParsingTable error at: " + configuration.getHeadOfWorkingStack() + ',' + configuration.getHeadOfInputStack());
                         go = false;
                     }
                 }
@@ -96,25 +98,21 @@ public class Parser {
     }
 
     private TreeNode getLeftMostNonTerminalNodeFromTree(TreeNode currentNode) {
-        if (currentNode != null) { //this is dfs basically
-            if (currentNode.getChildren() != null) {
-                if (currentNode.getChildren().isEmpty()) { //if leaf but non-terminal we found it.
-                    return currentNode;
-                } else {
-                    for (TreeNode childNode : currentNode.getChildren()) {
-                        //we check for each child starting from left to right.
-                        TreeNode node = getLeftMostNonTerminalNodeFromTree(childNode);
-                        if (node != null) {
-                            if (node.getChildren() != null && node.getChildren().isEmpty()) {
-                                return node; //probably im repeating myself here, but it's too late for me to think
-                                // better
-                            }
-                        }
+        if (currentNode != null && currentNode.getChildren() != null) { //this is dfs basically
+            if (currentNode.getChildren().isEmpty()) { //if leaf but non-terminal we found it.
+                return currentNode;
+            } else {
+                for (TreeNode childNode : currentNode.getChildren()) {
+                    //we check for each child starting from left to right.
+                    TreeNode node = getLeftMostNonTerminalNodeFromTree(childNode);
+                    if (node.getChildren() != null && node.getChildren().isEmpty()) {
+                        return node; //probably im repeating myself here, but it's too late for me to think
+                        // better
                     }
                 }
             }
-            //if the children list is null -> leaf with a terminal -> we skip.
         }
+        //if the children list is null -> leaf with a terminal -> we skip.
         return null;
     }
 

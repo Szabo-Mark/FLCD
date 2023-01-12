@@ -19,32 +19,8 @@ public class TreeNode {
         return index;
     }
 
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    public String getInfo() {
-        return info;
-    }
-
-    public void setInfo(String info) {
-        this.info = info;
-    }
-
-    public TreeNode getParent() {
-        return parent;
-    }
-
-    public void setParent(TreeNode parent) {
-        this.parent = parent;
-    }
-
     public List<TreeNode> getChildren() {
         return children;
-    }
-
-    public void setChildren(List<TreeNode> children) {
-        this.children = children;
     }
 
     @Override
