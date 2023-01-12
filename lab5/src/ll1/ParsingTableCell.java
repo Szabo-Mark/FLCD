@@ -32,16 +32,8 @@ public class ParsingTableCell {
         return rhsOfProduction;
     }
 
-    public void setRhsOfProduction(List<String> rhsOfProduction) {
-        this.rhsOfProduction = rhsOfProduction;
-    }
-
     public int getNumberOfProduction() {
         return numberOfProduction;
-    }
-
-    public void setNumberOfProduction(int numberOfProduction) {
-        this.numberOfProduction = numberOfProduction;
     }
 
     @Override
