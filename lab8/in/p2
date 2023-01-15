@@ -1,0 +1,12 @@
+program{
+int a;
+int b;
+int r;
+r=1;
+consola>>a;
+consola>>b;
+repeta i=1:b {
+	r=r*a;
+}
+consola<<r;
+}

@@ -1,0 +1,16 @@
+program{
+int 3a;
+a=3;
+int b;
+b=3;
+char salut='aaaaaa';
+pana a!=b{
+	daca a>b {
+		a=a-b;
+	}
+	altfel {
+		b=b-a;
+	}
+}
+consola<<a;
+}
