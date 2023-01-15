@@ -78,7 +78,7 @@ public class Main {
                 Press 7 to print parsing table
                 Press 8 to check if g1.txt sequence works
                 Press anything else and you exit.
-                                
+                               
                 """);
     }
 }

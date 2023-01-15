@@ -19,37 +19,13 @@ public class TreeNode {
         return index;
     }
 
-    public void setIndex(int index) {
-        this.index = index;
-    }
-
-    public String getInfo() {
-        return info;
-    }
-
-    public void setInfo(String info) {
-        this.info = info;
-    }
-
-    public TreeNode getParent() {
-        return parent;
-    }
-
-    public void setParent(TreeNode parent) {
-        this.parent = parent;
-    }
-
     public List<TreeNode> getChildren() {
         return children;
     }
 
-    public void setChildren(List<TreeNode> children) {
-        this.children = children;
-    }
-
     @Override
     public String toString() {
-        return String.format("%-2s  %-10s  %-2s",
+        return String.format("%-7s  %-10s  %-2s",
                 index, info, parent != null ? parent.getIndex() : 0) + '\n';
     }
 }
